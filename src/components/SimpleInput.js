@@ -7,6 +7,13 @@ const SimpleInput = () => {
   const enteredNameIsValid = enteredName.trim() !== '';
   const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
 
+  // This works (I think) because the 'nameInputChangeHandler' is called on every keystroke, which updates the 'enteredName' state, which re-evaluates the entire component
+  // So 'formIsValid' is set to 'false' (below) after every keystroke, then updated to true if it's valid
+  let formIsValid = false;
+  if (enteredNameIsValid) { // Imagine there are multiple inputs with 'isValid' states, and they're all included in this 'if'
+    formIsValid = true;
+  }
+
   const nameInputChangeHandler = (event) => {
     setEnteredName(event.target.value);
   };
@@ -46,7 +53,7 @@ const SimpleInput = () => {
         )}
       </div>
       <div className="form-actions">
-        <button>Submit</button>
+        <button disabled={!formIsValid}>Submit</button>
       </div>
     </form>
   );
