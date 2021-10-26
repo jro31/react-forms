@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import useInput from '../hooks/use-input';
 
 const SimpleInput = () => {
@@ -7,36 +5,29 @@ const SimpleInput = () => {
     value: enteredName, // Object destructuring - Assigns the value 'value' to the variable 'enteredName' - Same for the lines below
     isValid: enteredNameIsValid,
     hasError: nameInputHasError,
-    valueChangeHandler: nameChangedHandler,
+    valueChangeHandler: nameChangeHandler,
     inputBlurHandler: nameBlurHandler,
     reset: resetNameInput,
   } = useInput(value => value.trim() !== ''); // Anonymous arrow function, which is defined but NOT EXECUTED here, and received by 'useInput()' as the 'validateValue' parameter
   // It is executed in the 'const valueIsValid = validateValue(enteredValue);' line of 'use-input.js'
   // The 'enteredValue' param which is passed-into 'validateValue(enteredValue)', is the value 'value' which is passed-into this function here
 
-  const [enteredEmail, setEnteredEmail] = useState('');
-  const [enteredEmailTouched, setEnteredEmailTouched] = useState(false);
-
-  const enteredEmailIsValid = enteredEmail.includes('@') && enteredEmail.includes('.');
-  const emailInputIsInvalid = !enteredEmailIsValid && enteredEmailTouched;
+  const {
+    value: enteredEmail,
+    isValid: enteredEmailIsValid,
+    hasError: emailInputHasError,
+    valueChangeHandler: emailChangeHandler,
+    inputBlurHandler: emailBlurHandler,
+    reset: resetEmailInput,
+  } = useInput(value => value.includes('@') && value.includes('.'));
 
   let formIsValid = false;
   if (enteredNameIsValid && enteredEmailIsValid) {
     formIsValid = true;
   }
 
-  const emailInputChangeHandler = (event) => {
-    setEnteredEmail(event.target.value);
-  };
-
-  const emailInputBlurHandler = () => {
-    setEnteredEmailTouched(true);
-  };
-
   const formSumbissionHandler = (event) => {
     event.preventDefault(); // Prevent an http request being sent to the server automatically
-
-    setEnteredEmailTouched(true);
 
     if (!enteredNameIsValid || !enteredEmailIsValid) return;
 
@@ -44,13 +35,11 @@ const SimpleInput = () => {
     console.log(enteredEmail);
 
     resetNameInput();
-
-    setEnteredEmail('');
-    setEnteredEmailTouched(false);
+    resetEmailInput();
   };
 
   const nameInputClasses = nameInputHasError ? 'form-control invalid' : 'form-control'
-  const emailInputClasses = emailInputIsInvalid ? 'form-control invalid' : 'form-control'
+  const emailInputClasses = emailInputHasError ? 'form-control invalid' : 'form-control'
 
   return (
     <form onSubmit={formSumbissionHandler}>
@@ -59,7 +48,7 @@ const SimpleInput = () => {
         <input
           type="text"
           id="name"
-          onChange={nameChangedHandler}
+          onChange={nameChangeHandler}
           onBlur={nameBlurHandler}
           value={enteredName}
         />
@@ -72,11 +61,11 @@ const SimpleInput = () => {
         <input
           type="email" // Adds some browser validations
           id="email"
-          onChange={emailInputChangeHandler}
-          onBlur={emailInputBlurHandler}
+          onChange={emailChangeHandler}
+          onBlur={emailBlurHandler}
           value={enteredEmail}
         />
-        {emailInputIsInvalid && (
+        {emailInputHasError && (
           <p className="error-text">Email is invalid</p>
         )}
       </div>
