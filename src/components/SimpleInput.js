@@ -29,7 +29,7 @@ const SimpleInput = () => {
   const formSumbissionHandler = (event) => {
     event.preventDefault(); // Prevent an http request being sent to the server automatically
 
-    if (!enteredNameIsValid || !enteredEmailIsValid) return;
+    if (!formIsValid) return;
 
     console.log(enteredName);
     console.log(enteredEmail);
